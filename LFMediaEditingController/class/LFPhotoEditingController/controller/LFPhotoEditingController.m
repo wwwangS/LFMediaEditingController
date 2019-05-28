@@ -21,6 +21,9 @@
 #import "JRFilterBar.h"
 #import "FilterSuiteUtils.h"
 
+//#import "LFPhotoEdit.h"
+#import "LeePhotoOrAlbumImagePicker.h"
+
 
 @interface LFPhotoEditingController () <LFEditToolbarDelegate, LFStickerBarDelegate, JRFilterBarDelegate, JRFilterBarDataSource, LFClipToolbarDelegate, LFTextBarDelegate, LFPhotoEditDelegate, LFEditingViewDelegate, UIActionSheetDelegate, UIGestureRecognizerDelegate>
 {
@@ -53,9 +56,17 @@
 /** 滤镜缩略图 */
 @property (nonatomic, strong) UIImage *filterSmallImage;
 
+@property (nonatomic,strong) LeePhotoOrAlbumImagePicker *myPicker;
 @end
 
 @implementation LFPhotoEditingController
+
+-(LeePhotoOrAlbumImagePicker *)myPicker {
+    if (!_myPicker) {
+        _myPicker = [LeePhotoOrAlbumImagePicker new];
+    }
+    return _myPicker;
+}
 
 - (instancetype)initWithOrientation:(UIInterfaceOrientation)orientation
 {
@@ -70,6 +81,10 @@
 {
     _editImage = editImage;
     _EditingView.image = editImage;
+    //    if (!self.photoEdit) {
+    
+    //        [_EditingView createStickerImage:self.editImage];
+    //    }
     if (editImage.images.count) {
         /** gif不能使用模糊功能 */
         if (_operationType & LFPhotoEditOperationType_splash) {
@@ -179,20 +194,21 @@
     [_edit_naviBar addSubview:naviBar];
     
     UIFont *font = [UIFont systemFontOfSize:15];
-    CGFloat editCancelWidth = [[NSBundle LFME_localizedStringForKey:@"_LFME_cancelButtonTitle"] boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:font} context:nil].size.width + 30;
+    CGFloat editCancelWidth = [NSLocalizedString(@"cancelButtonTitle", @"") boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:font} context:nil].size.width + 30;
     UIButton *_edit_cancelButton = [[UIButton alloc] initWithFrame:CGRectMake(margin, 0, editCancelWidth, naviHeight)];
     _edit_cancelButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-    [_edit_cancelButton setTitle:[NSBundle LFME_localizedStringForKey:@"_LFME_cancelButtonTitle"] forState:UIControlStateNormal];
+    [_edit_cancelButton setTitle:NSLocalizedString(@"cancelButtonTitle", @"") forState:UIControlStateNormal];
     _edit_cancelButton.titleLabel.font = font;
     [_edit_cancelButton setTitleColor:self.cancelButtonTitleColorNormal forState:UIControlStateNormal];
     [_edit_cancelButton addTarget:self action:@selector(cancelButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [naviBar addSubview:_edit_cancelButton];
     
-    CGFloat editOkWidth = [[NSBundle LFME_localizedStringForKey:@"_LFME_oKButtonTitle"] boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:font} context:nil].size.width + 30;
-
+    
+    CGFloat editOkWidth = [NSLocalizedString(@"oKButtonTitle", @"") boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:font} context:nil].size.width + 30;
+    
     UIButton *_edit_finishButton = [[UIButton alloc] initWithFrame:CGRectMake(self.view.width - editOkWidth-margin, 0, editOkWidth, naviHeight)];
     _edit_finishButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-    [_edit_finishButton setTitle:[NSBundle LFME_localizedStringForKey:@"_LFME_oKButtonTitle"] forState:UIControlStateNormal];
+    [_edit_finishButton setTitle:NSLocalizedString(@"oKButtonTitle", @"") forState:UIControlStateNormal];
     _edit_finishButton.titleLabel.font = font;
     [_edit_finishButton setTitleColor:self.oKButtonTitleColorNormal forState:UIControlStateNormal];
     [_edit_finishButton addTarget:self action:@selector(finishButtonClick) forControlEvents:UIControlEventTouchUpInside];
@@ -336,44 +352,47 @@
     [_EditingView stickerDeactivated];
     
     switch (index) {
-        case LFEditToolbarType_draw:
+            case LFEditToolbarType_draw:
         {
-            /** 关闭涂抹 */
-            _EditingView.splashEnable = NO;
-            /** 打开绘画 */
-            _EditingView.drawEnable = !_EditingView.drawEnable;
+        /** 关闭涂抹 */
+        _EditingView.splashEnable = NO;
+        /** 打开绘画 */
+        _EditingView.drawEnable = !_EditingView.drawEnable;
         }
             break;
-        case LFEditToolbarType_sticker:
+            case LFEditToolbarType_sticker:
         {
-            [self singlePressed];
-            [self changeStickerMenu:YES animated:YES];
+        [self.myPicker getPhotoAlbumOrTakeAPhotoWithController:self photoBlock:^(UIImage *image) {
+            [_EditingView createStickerImage:image];
+        }];
+        //            [self singlePressed];
+        //            [self changeStickerMenu:YES animated:YES];
         }
             break;
-        case LFEditToolbarType_text:
+            case LFEditToolbarType_text:
         {
-            [self showTextBarController:nil];
+        [self showTextBarController:nil];
         }
             break;
-        case LFEditToolbarType_splash:
+            case LFEditToolbarType_splash:
         {
-            /** 关闭绘画 */
-            _EditingView.drawEnable = NO;
-            /** 打开涂抹 */
-            _EditingView.splashEnable = !_EditingView.splashEnable;
+        /** 关闭绘画 */
+        _EditingView.drawEnable = NO;
+        /** 打开涂抹 */
+        _EditingView.splashEnable = !_EditingView.splashEnable;
         }
             break;
-        case LFEditToolbarType_filter:
+            case LFEditToolbarType_filter:
         {
-            [self singlePressed];
-            [self changeFilterMenu:YES animated:YES];
+        [self singlePressed];
+        [self changeFilterMenu:YES animated:YES];
         }
             break;
-        case LFEditToolbarType_crop:
+            case LFEditToolbarType_crop:
         {
-            [_EditingView setIsClipping:YES animated:YES];
-            [self changeClipMenu:YES];
-            _edit_clipping_toolBar.enableReset = _EditingView.canReset;
+        [_EditingView setIsClipping:YES animated:YES];
+        [self changeClipMenu:YES];
+        _edit_clipping_toolBar.enableReset = _EditingView.canReset;
         }
             break;
         default:
@@ -384,21 +403,21 @@
 - (void)lf_editToolbar:(LFEditToolbar *)editToolbar subDidRevokeAtIndex:(NSUInteger)index
 {
     switch (index) {
-        case LFEditToolbarType_draw:
+            case LFEditToolbarType_draw:
         {
-            [_EditingView drawUndo];
+        [_EditingView drawUndo];
         }
             break;
-        case LFEditToolbarType_sticker:
+            case LFEditToolbarType_sticker:
             break;
-        case LFEditToolbarType_text:
+            case LFEditToolbarType_text:
             break;
-        case LFEditToolbarType_splash:
+            case LFEditToolbarType_splash:
         {
-            [_EditingView splashUndo];
+        [_EditingView splashUndo];
         }
             break;
-        case LFEditToolbarType_crop:
+            case LFEditToolbarType_crop:
             break;
         default:
             break;
@@ -408,18 +427,18 @@
 - (void)lf_editToolbar:(LFEditToolbar *)editToolbar subDidSelectAtIndex:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
-        case LFEditToolbarType_draw:
+            case LFEditToolbarType_draw:
             break;
-        case LFEditToolbarType_sticker:
+            case LFEditToolbarType_sticker:
             break;
-        case LFEditToolbarType_text:
+            case LFEditToolbarType_text:
             break;
-        case LFEditToolbarType_splash:
+            case LFEditToolbarType_splash:
         {
-            _EditingView.splashState = indexPath.row == 1;
+        _EditingView.splashState = indexPath.row == 1;
         }
             break;
-        case LFEditToolbarType_crop:
+            case LFEditToolbarType_crop:
             break;
         default:
             break;
@@ -430,21 +449,21 @@
 {
     BOOL canUndo = NO;
     switch (index) {
-        case LFEditToolbarType_draw:
+            case LFEditToolbarType_draw:
         {
-            canUndo = [_EditingView drawCanUndo];
+        canUndo = [_EditingView drawCanUndo];
         }
             break;
-        case LFEditToolbarType_sticker:
+            case LFEditToolbarType_sticker:
             break;
-        case LFEditToolbarType_text:
+            case LFEditToolbarType_text:
             break;
-        case LFEditToolbarType_splash:
+            case LFEditToolbarType_splash:
         {
-            canUndo = [_EditingView splashCanUndo];
+        canUndo = [_EditingView splashCanUndo];
         }
             break;
-        case LFEditToolbarType_crop:
+            case LFEditToolbarType_crop:
             break;
         default:
             break;
@@ -521,7 +540,7 @@
     NSArray *items = [_EditingView aspectRatioDescs];
     if (NSClassFromString(@"UIAlertController")) {
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-        [alertController addAction:[UIAlertAction actionWithTitle:[NSBundle LFME_localizedStringForKey:@"_LFME_cancelButtonTitle"] style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"cancelButtonTitle", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
             self->_edit_clipping_toolBar.selectAspectRatio = NO;
             [self->_EditingView setAspectRatio:nil];
         }]];
@@ -549,7 +568,7 @@
         
         UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
                                                                  delegate:self
-                                                        cancelButtonTitle:[NSBundle LFME_localizedStringForKey:@"_LFME_cancelButtonTitle"]
+                                                        cancelButtonTitle:NSLocalizedString(@"cancelButtonTitle", @"")
                                                    destructiveButtonTitle:nil
                                                         otherButtonTitles:nil];
         
@@ -558,9 +577,9 @@
         }
         
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-            [actionSheet showFromRect:clipToolbar.frame inView:clipToolbar animated:YES];
+        [actionSheet showFromRect:clipToolbar.frame inView:clipToolbar animated:YES];
         else
-            [actionSheet showInView:self.view];
+        [actionSheet showInView:self.view];
 #pragma clang diagnostic pop
     }
 }
@@ -820,7 +839,7 @@
         [self singlePressedWithAnimated:animated];
     } else {
         if (_edit_clipping_toolBar.superview == nil) return;
-
+        
         /** 开启编辑 */
         [_EditingView photoEditEnable:YES];
         
@@ -830,7 +849,7 @@
                 self->_edit_clipping_toolBar.alpha = 0.f;
             } completion:^(BOOL finished) {
                 [self->_edit_clipping_toolBar removeFromSuperview];
-            }];            
+            }];
         } else {
             [_edit_clipping_toolBar removeFromSuperview];
         }
@@ -841,6 +860,7 @@
 
 - (void)changeStickerMenu:(BOOL)isChanged animated:(BOOL)animated
 {
+    //    __weak typeof(self) weakSelf = self;
     if (isChanged) {
         [self.view addSubview:self.edit_sticker_toolBar];
         CGRect frame = self.edit_sticker_toolBar.frame;
@@ -908,15 +928,15 @@
     LFTextBar *textBar = [[LFTextBar alloc] initWithFrame:CGRectMake(0, self.view.height, self.view.width, self.view.height) layout:^(LFTextBar *textBar) {
         textBar.oKButtonTitleColorNormal = self.oKButtonTitleColorNormal;
         textBar.cancelButtonTitleColorNormal = self.cancelButtonTitleColorNormal;
-        textBar.oKButtonTitle = [NSBundle LFME_localizedStringForKey:@"_LFME_oKButtonTitle"];
-        textBar.cancelButtonTitle = [NSBundle LFME_localizedStringForKey:@"_LFME_cancelButtonTitle"];
+        textBar.oKButtonTitle = NSLocalizedString(@"oKButtonTitle", @"");
+        textBar.cancelButtonTitle = NSLocalizedString(@"cancelButtonTitle", @"");
         textBar.customTopbarHeight = self->_edit_naviBar.height;
         textBar.naviHeight = CGRectGetHeight(self.navigationController.navigationBar.frame);
     }];
     textBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     textBar.showText = text;
     textBar.delegate = self;
-
+    
     [self.view addSubview:textBar];
     
     [textBar becomeFirstResponder];

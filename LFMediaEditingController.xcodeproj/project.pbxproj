@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		127AEC90229CDFB100E9A168 /* LeePhotoOrAlbumImagePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 127AEC8F229CDFB100E9A168 /* LeePhotoOrAlbumImagePicker.m */; };
 		6F14E5D51EE6438A0049AE56 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F14E5D41EE6438A0049AE56 /* main.m */; };
 		6F14E5D81EE6438A0049AE56 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F14E5D71EE6438A0049AE56 /* AppDelegate.m */; };
 		6F14E5DB1EE6438A0049AE56 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F14E5DA1EE6438A0049AE56 /* ViewController.m */; };
@@ -97,6 +98,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		127AEC8E229CDFB100E9A168 /* LeePhotoOrAlbumImagePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeePhotoOrAlbumImagePicker.h; sourceTree = "<group>"; };
+		127AEC8F229CDFB100E9A168 /* LeePhotoOrAlbumImagePicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeePhotoOrAlbumImagePicker.m; sourceTree = "<group>"; };
 		6F14E5D01EE6438A0049AE56 /* LFMediaEditingController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LFMediaEditingController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F14E5D41EE6438A0049AE56 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6F14E5D61EE6438A0049AE56 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -344,6 +347,8 @@
 			children = (
 				6F384D431EEA2C290077D207 /* LFBaseEditingController.h */,
 				6F384D441EEA2C290077D207 /* LFBaseEditingController.m */,
+				127AEC8E229CDFB100E9A168 /* LeePhotoOrAlbumImagePicker.h */,
+				127AEC8F229CDFB100E9A168 /* LeePhotoOrAlbumImagePicker.m */,
 				6F359B171F1C8AA3009F2035 /* common */,
 				6F14E5EB1EE6439E0049AE56 /* LFPhotoEditingController */,
 				6F384D3C1EE69FFC0077D207 /* LFVideoEditingController */,
@@ -915,6 +920,7 @@
 				6F359B3B1F1DE99F009F2035 /* LFVideoTrimmerView.m in Sources */,
 				6F14E6561EE6439E0049AE56 /* LFClipToolbar.m in Sources */,
 				6F14E6491EE6439E0049AE56 /* LFZoomingView.m in Sources */,
+				127AEC90229CDFB100E9A168 /* LeePhotoOrAlbumImagePicker.m in Sources */,
 				C7E750F92119294F00022FCF /* LFColorMatrixType.m in Sources */,
 				C7B4492B222904AA00FA460D /* LFContextImageView.m in Sources */,
 				6F14E5D51EE6438A0049AE56 /* main.m in Sources */,
